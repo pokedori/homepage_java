@@ -1,0 +1,26 @@
+「PATH: /python-container/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin」にパスが追加されているから
+
+「docker compose exec python-dev django-admin」とすることで、pythonの「.venv」が直接起動することができる。
+
+例えば、以下のようにDjangoを入れられる
+docker compose exec python-dev django-admin startproject config /python-container
+docker compose exec python-dev python manage.py startapp api
+
+
+
+
+requirements.txtを変更してパッケージを追加したあと
+pipを使って、requirements.lock.txt 作成する方法は以下
+docker compose exec python-dev sh -lc 'cd /python-container && rm -rf /tmp/lockenv && python -m venv /tmp/lockenv && . /tmp/lockenv/bin/activate && pip install -U pip setuptools wheel && pip install -r requirements.txt && { echo "# Generated from python-container/requirements.txt on $(python --version | awk \"{print \\$2}\")"; echo "# via \`pip freeze\` in the \`python-dev\` container."; pip freeze | sort; } > requirements.lock.txt'
+
+
+Djangoのプロジェクトを追加
+
+docker compose exec python-dev django-admin startproject config /python-container
+
+
+APIをつくーる！
+docker compose exec python-dev python manage.py startapp api
+
+
+. /python-container/.venv/bin/activateで、.vnevが起動出来る。

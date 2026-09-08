@@ -1,0 +1,10 @@
+.venv/
+python-container/.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+react-container/node_modules/
+react-container/dist/
+.DS_Store

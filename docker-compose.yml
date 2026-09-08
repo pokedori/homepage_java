@@ -1,0 +1,33 @@
+services:
+  python-dev:
+    build:
+      context: .
+      dockerfile: python-container/Dockerfile
+    image: test-python-dev:latest
+    container_name: test-python-dev
+    working_dir: /python-container
+    volumes:
+      - ./python-container:/python-container
+    ports:
+      - "8000:8000"
+    environment:
+      VIRTUAL_ENV: /python-container/.venv
+      PATH: /python-container/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    stdin_open: true
+    tty: true
+    command: ["/python-container/start_python.sh"]
+
+  react-dev:
+    build:
+      context: .
+      dockerfile: react-container/Dockerfile
+    image: test-react-dev:latest
+    container_name: test-react-dev
+    working_dir: /react-container
+    volumes:
+      - ./react-container:/react-container
+    ports:
+      - "5173:5173"
+    stdin_open: true
+    tty: true
+    command: ["/react-container/start_react.sh"]

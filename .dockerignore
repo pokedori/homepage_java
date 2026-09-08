@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+python-container/.venv/
+venv/
+react-container/node_modules/
+react-container/dist/
+.git/
+.gitignore
+.DS_Store

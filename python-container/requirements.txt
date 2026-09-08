@@ -1,0 +1,15 @@
+# Pin direct dependencies so `pip install -r requirements.txt` does not
+# automatically pick newer releases.
+ipython==9.15.0
+pytest==9.1.1
+pytest-cov==7.1.0
+black==26.5.1
+ruff==0.15.21
+mypy==2.3.0
+debugpy==1.8.21
+ipykernel==7.3.0
+jupyterlab==4.6.1
+python-dotenv==1.2.2
+requests==2.34.2
+Django==6.0.7
+djangorestframework==3.17.1
