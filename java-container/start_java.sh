@@ -11,5 +11,5 @@ echo "Java environment is ready."
 # コンテナが終了しないように、無限に待機するプロセスを実行し続ける
 # ユーザーは 'docker compose exec java-dev bash' でこのコンテナに入ってm作業します。
 echo "Container is running. Use 'docker compose exec java-dev bash' to enter."
-exec tail -f /dev/null
 
+exec bash
