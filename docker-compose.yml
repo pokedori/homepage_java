@@ -31,3 +31,17 @@ services:
     stdin_open: true
     tty: true
     command: ["/react-container/start_react.sh"]
+
+  java-dev:
+    build:
+      context: .
+      dockerfile: java-container/Dockerfile
+    image: test-java-dev:latest
+    container_name: test-java-dev
+    working_dir: /java-container
+    volumes:
+      - ./java-container:/java-container
+    stdin_open: true
+    tty: true
+    command: ["/java-container/start_java.sh"]
+
