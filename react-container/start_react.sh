@@ -17,6 +17,5 @@ if [ -f "${PACKAGE_JSON_FILE}" ]; then
   fi
 fi
 
-echo "React environment is ready."
-
-exec bash
+# tmuxセッションが存在しなければ作成してReactを起動
+exec tmux new-session -s react "npm run dev -- --host 0.0.0.0"
