@@ -98,6 +98,16 @@ code {
   background: var(--code-bg);
 }
 
+.env-output {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -166,6 +176,52 @@ code {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+
+.route-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.site-brand,
+.site-nav a {
+  color: var(--text-h);
+  text-decoration: none;
+}
+
+.site-brand {
+  font-weight: 600;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.site-nav a[aria-current='page'] {
+  color: var(--accent);
+}
+
+.simple-page a {
+  color: var(--accent);
+}
+
+@media (max-width: 480px) {
+  .site-header {
+    padding: 12px 16px;
+  }
 }
 
 #center {
