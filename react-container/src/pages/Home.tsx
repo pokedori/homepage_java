@@ -3,6 +3,7 @@ import { useState } from 'react'
 import heroImg from '../assets/hero.png'
 import typescriptLogo from '../assets/typescript.svg'
 import viteLogo from '../assets/vite.svg'
+import { ContactForm } from '../components/ContactForm.tsx'
 
 export function Home() {
   const [counter, setCounter] = useState(0)
@@ -35,6 +36,8 @@ export function Home() {
           Count is {counter}
         </button>
       </section>
+
+      <ContactForm />
 
       <div className="ticks" />
 
