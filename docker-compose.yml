@@ -23,6 +23,8 @@ services:
     working_dir: /java-container
     volumes:
       - ./java-container:/java-container
+    ports:
+      - "8080:8080"
     stdin_open: true
     tty: true
     command: ["/java-container/start_java.sh"]
