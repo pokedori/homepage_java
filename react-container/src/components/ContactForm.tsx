@@ -9,6 +9,7 @@ type ContactDraft = {
 
 const contactDraftKey = 'homepage-contact-draft'
 
+// ブラウザーに保存された入力内容を読み込み、取得できない場合は空の入力データを返す。
 function loadContactDraft(): ContactDraft {
   const emptyDraft: ContactDraft = { name: '', email: '', subject: '', message: '' }
 
@@ -34,7 +35,8 @@ function loadContactDraft(): ContactDraft {
 export function ContactForm() {
   const [contactStatus, setContactStatus] = useState('')
   const [contactDraft, setContactDraft] = useState<ContactDraft>(loadContactDraft)
-  const contactEmail = (import.meta.env.VITE_CONTACT_EMAIL ?? '').trim()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const contactApiUrl = (import.meta.env.VITE_CONTACT_API_URL ?? '').trim()
 
   useEffect(() => {
     try {
@@ -52,20 +54,43 @@ export function ContactForm() {
     setContactDraft((currentDraft) => ({ ...currentDraft, [field]: value }))
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!contactEmail) {
-      setContactStatus('送信先が未設定です。.env の VITE_CONTACT_EMAIL に宛先を設定してください。')
+    const form = event.currentTarget
+    const requiredFields = ['name', 'email', 'message'] as const
+    for (const fieldName of requiredFields) {
+      const field = form.elements.namedItem(fieldName)
+      if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+        field.setCustomValidity(field.value.trim() ? '' : '空白以外の文字を入力してください。')
+      }
+    }
+
+    if (!form.reportValidity()) return
+
+    if (!contactApiUrl) {
+      setContactStatus('送信APIが未設定です。.env の VITE_CONTACT_API_URL にURLを設定してください。')
       return
     }
 
-    const subject = contactDraft.subject.trim() || `お問い合わせ: ${contactDraft.name}`
-    const body = `お名前: ${contactDraft.name}\nメールアドレス: ${contactDraft.email}\n\n${contactDraft.message}`
-    const query = new URLSearchParams({ subject, body })
+    setIsSubmitting(true)
+    setContactStatus('送信しています...')
+    try {
+      const response = await fetch(contactApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactDraft),
+      })
 
-    window.location.href = `mailto:${encodeURIComponent(contactEmail)}?${query.toString()}`
-    setContactStatus('メールアプリが開いたら、内容を確認して送信してください。')
+      if (!response.ok) throw new Error(`Request failed: ${response.status}`)
+
+      setContactDraft({ name: '', email: '', subject: '', message: '' })
+      setContactStatus('お問い合わせを送信しました。')
+    } catch {
+      setContactStatus('送信に失敗しました。時間をおいて再度お試しください。')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   function clearDraft() {
@@ -89,7 +114,10 @@ export function ContactForm() {
               type="text"
               autoComplete="name"
               value={contactDraft.name}
-              onChange={(event) => updateContactDraft('name', event.currentTarget.value)}
+              onChange={(event) => {
+                event.currentTarget.setCustomValidity('')
+                updateContactDraft('name', event.currentTarget.value)
+              }}
               required
             />
           </label>
@@ -100,7 +128,10 @@ export function ContactForm() {
               type="email"
               autoComplete="email"
               value={contactDraft.email}
-              onChange={(event) => updateContactDraft('email', event.currentTarget.value)}
+              onChange={(event) => {
+                event.currentTarget.setCustomValidity('')
+                updateContactDraft('email', event.currentTarget.value)
+              }}
               required
             />
           </label>
@@ -119,13 +150,16 @@ export function ContactForm() {
               name="message"
               rows={6}
               value={contactDraft.message}
-              onChange={(event) => updateContactDraft('message', event.currentTarget.value)}
+              onChange={(event) => {
+                event.currentTarget.setCustomValidity('')
+                updateContactDraft('message', event.currentTarget.value)
+              }}
               required
             />
           </label>
           <div className="contact-actions">
-            <button className="contact-submit" type="submit">
-              メールを作成
+            <button className="contact-submit" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? '送信中...' : '送信する'}
             </button>
             <button className="contact-clear" type="button" onClick={clearDraft}>
               入力内容を消去
@@ -133,9 +167,9 @@ export function ContactForm() {
           </div>
           <p className="contact-status" role="status" aria-live="polite">
             {contactStatus ||
-              (contactEmail
-                ? '送信ボタンを押すと、お使いのメールアプリが開きます。'
-                : '.env の VITE_CONTACT_EMAIL に送信先を設定すると利用できます。')}
+              (contactApiUrl
+                ? 'お問い合わせ内容を送信できます。'
+                : '.env の VITE_CONTACT_API_URL に送信APIのURLを設定してください。')}
           </p>
           <p className="contact-storage-note">
             入力内容はこのブラウザーに保存されます。共有端末ではご注意ください。
